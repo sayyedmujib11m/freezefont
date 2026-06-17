@@ -1,14 +1,13 @@
-# FreezeFont
+# FreezeFont Backend
 
-FreezeFont converts Variable Fonts into Static TTF fonts.
+Built with:
 
-## Planned Features
+- FastAPI
+- FontTools
+- Brotli
 
-- Upload WOFF2 variable fonts
-- Detect font instances automatically
-- Convert instances to static TTFs
-- Download all fonts as ZIP
+Purpose:
 
-## Status
-
-🚧 Early Development
+- Read Variable Fonts
+- Detect Instances
+- Generate Static TTFs
