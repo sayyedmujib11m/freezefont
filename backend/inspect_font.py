@@ -1,26 +1,43 @@
 from fontTools.ttLib import TTFont
 
-font_path = input("Enter font path: ")
 
-font = TTFont(font_path)
+def inspect_font(font_path):
 
-print("\n=== FONT INFO ===")
+    font = TTFont(font_path)
 
-if "fvar" not in font:
-    print("This is not a variable font.")
-    exit()
+    if "fvar" not in font:
+        return {
+            "is_variable": False
+        }
 
-fvar = font["fvar"]
+    family_name = "Unknown"
 
-print("\nAxes:")
-for axis in fvar.axes:
-    print(
-        f"{axis.axisTag}: "
-        f"{axis.minValue} → {axis.maxValue} "
-        f"(default {axis.defaultValue})"
+    try:
+        for record in font["name"].names:
+            if record.nameID == 1:
+                family_name = record.toUnicode()
+                break
+    except:
+        pass
+
+    axes = []
+
+    for axis in font["fvar"].axes:
+
+        axes.append({
+            "tag": axis.axisTag,
+            "min": axis.minValue,
+            "max": axis.maxValue,
+            "default": axis.defaultValue
+        })
+
+    instance_count = len(
+        font["fvar"].instances
     )
 
-print("\nInstances:")
-for instance in fvar.instances:
-    coords = instance.coordinates
-    print(coords)
+    return {
+        "is_variable": True,
+        "family_name": family_name,
+        "instance_count": instance_count,
+        "axes": axes
+    }

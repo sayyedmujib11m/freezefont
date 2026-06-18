@@ -1,78 +1,138 @@
 <!DOCTYPE html>
 
 <html>
+
 <head>
-    <title>FreezeFont</title>
+<title>FreezeFont</title>
 
-```
 <style>
-    body{
-        font-family: Arial, sans-serif;
-        background:#f5f5f5;
-        display:flex;
-        justify-content:center;
-        padding:50px 20px;
-    }
 
-    .card{
-        background:white;
-        width:100%;
-        max-width:550px;
-        padding:40px;
-        border-radius:20px;
-        text-align:center;
-        box-shadow:0 10px 30px rgba(0,0,0,0.08);
-    }
+*{
+    box-sizing:border-box;
+}
 
-    h1{
-        margin:0;
-        font-size:48px;
-    }
+body{
+    margin:0;
+    background:#f5f5f5;
+    font-family:Arial,sans-serif;
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    padding:20px;
+}
 
-    .tagline{
-        font-weight:bold;
-        color:#111;
-        margin-top:10px;
-        margin-bottom:20px;
-    }
+.card{
+    width:100%;
+    max-width:700px;
+    background:white;
+    padding:40px;
+    border-radius:24px;
+    box-shadow:0 10px 40px rgba(0,0,0,.08);
+    text-align:center;
+}
 
-    p{
-        color:#666;
-        line-height:1.5;
-    }
+h1{
+    margin:0;
+    font-size:52px;
+}
 
-    input{
-        margin-top:20px;
-    }
+.tagline{
+    margin-top:10px;
+    font-size:18px;
+    font-weight:bold;
+}
 
-    .filename{
-        margin-top:15px;
-        font-weight:bold;
-        color:#222;
-    }
+.subtitle{
+    color:#666;
+    margin-top:15px;
+    line-height:1.6;
+}
 
-    button{
-        margin-top:25px;
-        padding:14px 28px;
-        border:none;
-        border-radius:10px;
-        background:black;
-        color:white;
-        cursor:pointer;
-        font-size:16px;
-    }
+.dropzone{
+    margin-top:30px;
+    border:3px dashed #ddd;
+    border-radius:20px;
+    padding:50px 20px;
+    cursor:pointer;
+}
 
-    button:disabled{
-        opacity:.5;
-        cursor:not-allowed;
-    }
+.dropzone.dragover{
+    border-color:black;
+    background:#fafafa;
+}
 
-    .status{
-        margin-top:20px;
-        font-weight:bold;
+.icon{
+    font-size:48px;
+}
+
+.filename{
+    margin-top:15px;
+    font-weight:bold;
+}
+
+.formats{
+    margin-top:15px;
+    color:#888;
+    font-size:14px;
+}
+
+.infoBox{
+    margin-top:25px;
+    padding:20px;
+    border-radius:12px;
+    background:#fafafa;
+    text-align:left;
+    display:none;
+}
+
+.infoTitle{
+    font-weight:bold;
+    margin-bottom:10px;
+}
+
+.axis{
+    margin-top:5px;
+}
+
+button{
+    margin-top:25px;
+    border:none;
+    background:black;
+    color:white;
+    padding:15px 30px;
+    border-radius:12px;
+    cursor:pointer;
+    font-size:16px;
+}
+
+button:disabled{
+    opacity:.5;
+}
+
+.status{
+    margin-top:20px;
+    font-weight:bold;
+}
+
+.spinner{
+    display:none;
+    width:30px;
+    height:30px;
+    border:4px solid #ddd;
+    border-top:4px solid black;
+    border-radius:50%;
+    animation:spin 1s linear infinite;
+    margin:20px auto 0;
+}
+
+@keyframes spin{
+    100%{
+        transform:rotate(360deg);
     }
+}
+
 </style>
-```
 
 </head>
 
@@ -80,41 +140,90 @@
 
 <div class="card">
 
-```
 <h1>FreezeFont</h1>
 
 <div class="tagline">
-    Variable Font → Static TTF
+Variable Font → Static TTF
 </div>
 
-<p>
-    Upload a variable font and download all static instances as a ZIP file.
-</p>
+<div class="subtitle">
+Upload a variable font and inspect it before conversion.
+</div>
 
 <input
-    type="file"
-    id="fontFile"
+type="file"
+id="fontFile"
+hidden
+
 >
 
 <div
-    class="filename"
-    id="fileName"
+class="dropzone"
+id="dropzone"
 >
-    No file selected
+
+<div class="icon">
+Aa
 </div>
 
-<button id="convertBtn">
-    Convert Font
-</button>
+<h3>
+Drop Font Here
+</h3>
 
-<div class="status" id="status"></div>
-```
+<div>
+or click to browse
+</div>
+
+<div
+class="filename"
+id="fileName"
+>
+No file selected
+</div>
+
+<div class="formats">
+Supported: TTF • OTF • WOFF2 Variable Fonts
+</div>
+
+</div>
+
+<div
+class="infoBox"
+id="infoBox"
+>
+<div class="infoTitle">
+Font Information
+</div>
+
+<div id="fontInfo"></div>
+
+</div>
+
+<button
+id="convertBtn"
+
+>
+
+Convert & Download </button>
+
+<div
+class="spinner"
+id="spinner"
+></div>
+
+<div
+class="status"
+id="status"
+></div>
 
 </div>
 
 <script>
 
-const fontInput =
+const dropzone =
+document.getElementById("dropzone");
+
+const fileInput =
 document.getElementById("fontFile");
 
 const fileName =
@@ -126,14 +235,161 @@ document.getElementById("convertBtn");
 const statusText =
 document.getElementById("status");
 
-fontInput.addEventListener(
-    "change",
-    function(){
+const spinner =
+document.getElementById("spinner");
 
-        if(this.files.length > 0){
+const infoBox =
+document.getElementById("infoBox");
+
+const fontInfo =
+document.getElementById("fontInfo");
+
+dropzone.addEventListener(
+    "click",
+    () => fileInput.click()
+);
+
+async function inspectSelectedFont(){
+
+    if(fileInput.files.length === 0){
+        return;
+    }
+
+    const formData =
+    new FormData();
+
+    formData.append(
+        "file",
+        fileInput.files[0]
+    );
+
+    try{
+
+        const response =
+        await fetch(
+            "http://127.0.0.1:8000/inspect",
+            {
+                method:"POST",
+                body:formData
+            }
+        );
+
+        const data =
+        await response.json();
+
+        if(!data.is_variable){
+
+            fontInfo.innerHTML =
+            "Not a variable font.";
+
+            infoBox.style.display =
+            "block";
+
+            return;
+        }
+
+        let html = "";
+
+        html +=
+        "<b>Font:</b> " +
+        data.family_name +
+        "<br><br>";
+
+        html +=
+        "<b>Instances:</b> " +
+        data.instance_count +
+        "<br><br>";
+
+        html +=
+        "<b>Axes:</b><br>";
+
+        data.axes.forEach(axis => {
+
+            html +=
+            "<div class='axis'>" +
+            axis.tag +
+            " : " +
+            axis.min +
+            " → " +
+            axis.max +
+            "</div>";
+
+        });
+
+        fontInfo.innerHTML =
+        html;
+
+        infoBox.style.display =
+        "block";
+
+    }
+    catch(error){
+
+        console.error(error);
+
+    }
+
+}
+
+fileInput.addEventListener(
+    "change",
+    () => {
+
+        if(fileInput.files.length){
 
             fileName.textContent =
-            this.files[0].name;
+            fileInput.files[0].name;
+
+            inspectSelectedFont();
+
+        }
+
+    }
+);
+
+dropzone.addEventListener(
+    "dragover",
+    e => {
+
+        e.preventDefault();
+
+        dropzone.classList.add(
+            "dragover"
+        );
+
+    }
+);
+
+dropzone.addEventListener(
+    "dragleave",
+    () => {
+
+        dropzone.classList.remove(
+            "dragover"
+        );
+
+    }
+);
+
+dropzone.addEventListener(
+    "drop",
+    e => {
+
+        e.preventDefault();
+
+        dropzone.classList.remove(
+            "dragover"
+        );
+
+        fileInput.files =
+        e.dataTransfer.files;
+
+        if(fileInput.files.length){
+
+            fileName.textContent =
+            fileInput.files[0].name;
+
+            inspectSelectedFont();
 
         }
 
@@ -142,25 +398,32 @@ fontInput.addEventListener(
 
 convertBtn.addEventListener(
     "click",
-    async function(){
+    async () => {
 
-        if(fontInput.files.length === 0){
+        if(fileInput.files.length === 0){
 
-            alert("Please select a font");
+            alert(
+                "Please select a font."
+            );
 
             return;
         }
 
-        convertBtn.disabled = true;
+        spinner.style.display =
+        "block";
 
         statusText.textContent =
-        "Converting...";
+        "Converting font...";
 
-        const formData = new FormData();
+        convertBtn.disabled =
+        true;
+
+        const formData =
+        new FormData();
 
         formData.append(
             "file",
-            fontInput.files[0]
+            fileInput.files[0]
         );
 
         try{
@@ -178,7 +441,9 @@ convertBtn.addEventListener(
             await response.blob();
 
             const url =
-            window.URL.createObjectURL(blob);
+            window.URL.createObjectURL(
+                blob
+            );
 
             const a =
             document.createElement("a");
@@ -194,20 +459,25 @@ convertBtn.addEventListener(
 
             a.remove();
 
+            spinner.style.display =
+            "none";
+
             statusText.textContent =
-            "Download complete";
+            "✅ Conversion Complete";
 
         }
         catch(error){
 
-            statusText.textContent =
-            "Conversion failed";
+            spinner.style.display =
+            "none";
 
-            console.error(error);
+            statusText.textContent =
+            "❌ Conversion Failed";
 
         }
 
-        convertBtn.disabled = false;
+        convertBtn.disabled =
+        false;
 
     }
 );
