@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>FreezeFont</title>
+
+    <style>
+        body{
+            font-family: Arial, sans-serif;
+            background:#f5f5f5;
+            display:flex;
+            justify-content:center;
+            padding:50px 20px;
+        }
+
+        .card{
+            background:white;
+            width:100%;
+            max-width:550px;
+            padding:40px;
+            border-radius:20px;
+            text-align:center;
+            box-shadow:0 10px 30px rgba(0,0,0,0.08);
+        }
+
+        h1{
+            margin:0;
+            font-size:48px;
+        }
+
+        .tagline{
+            font-weight:bold;
+            color:#111;
+            margin-top:10px;
+            margin-bottom:20px;
+        }
+
+        p{
+            color:#666;
+            line-height:1.5;
+        }
+
+        input{
+            margin-top:20px;
+        }
+
+        .filename{
+            margin-top:15px;
+            font-weight:bold;
+            color:#222;
+        }
+
+        button{
+            margin-top:25px;
+            padding:14px 28px;
+            border:none;
+            border-radius:10px;
+            background:black;
+            color:white;
+            cursor:pointer;
+            font-size:16px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="card">
+
+    <h1>FreezeFont</h1>
+
+    <div class="tagline">
+        Variable Font → Static TTF
+    </div>
+
+    <p>
+        Upload a variable font and download all static instances as a ZIP file.
+    </p>
+
+    <input
+        type="file"
+        id="fontFile"
+    >
+
+    <div
+        class="filename"
+        id="fileName"
+    >
+        No file selected
+    </div>
+
+    <button>
+        Convert Font
+    </button>
+
+</div>
+
+<script>
+
+const fontInput =
+document.getElementById("fontFile");
+
+const fileName =
+document.getElementById("fileName");
+
+fontInput.addEventListener(
+    "change",
+    function(){
+
+        if(this.files.length > 0){
+
+            fileName.textContent =
+            this.files[0].name;
+
+        }
+
+    }
+);
+
+</script>
+
+</body>
+</html>

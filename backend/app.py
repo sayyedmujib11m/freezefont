@@ -2,7 +2,6 @@ from fastapi import FastAPI
 
 app = FastAPI()
 
-
 @app.get("/")
 def home():
     return {
@@ -10,9 +9,8 @@ def home():
         "status": "running"
     }
 
-
-@app.get("/health")
-def health():
+@app.get("/hello")
+def hello():
     return {
-        "status": "ok"
+        "message": "FreezeFont API is working"
     }
