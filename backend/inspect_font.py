@@ -33,6 +33,23 @@ def inspect_font(font_path):
 
     instances = []
 
+    common_styles = []
+
+    allowed_common = [
+        "Thin",
+        "Thin Oblique",
+        "Light",
+        "Light Oblique",
+        "Regular",
+        "Oblique",
+        "SemiBold",
+        "SemiBold Oblique",
+        "Bold",
+        "Bold Oblique",
+        "Black",
+        "Black Oblique"
+    ]
+
     for instance in font["fvar"].instances:
 
         instance_name = "Unknown"
@@ -56,10 +73,17 @@ def inspect_font(font_path):
             "name": instance_name
         })
 
+        if instance_name in allowed_common:
+
+            common_styles.append({
+                "name": instance_name
+            })
+
     return {
         "is_variable": True,
         "family_name": family_name,
         "instance_count": len(instances),
         "axes": axes,
-        "instances": instances
+        "instances": instances,
+        "common_styles": common_styles
     }

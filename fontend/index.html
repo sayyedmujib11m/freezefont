@@ -94,17 +94,6 @@ h1{
     margin-top:5px;
 }
 
-.styles{
-    margin-top:15px;
-    padding-top:15px;
-    border-top:1px solid #ddd;
-}
-
-.styleItem{
-    margin-top:4px;
-    color:#444;
-}
-
 .modeBox{
     margin-top:20px;
     padding-top:20px;
@@ -113,6 +102,16 @@ h1{
 
 .modeItem{
     margin-top:10px;
+}
+
+.styleSelector{
+    margin-top:20px;
+    padding-top:20px;
+    border-top:1px solid #ddd;
+}
+
+.styleRow{
+    margin-top:8px;
 }
 
 button{
@@ -124,10 +123,6 @@ button{
     border-radius:12px;
     cursor:pointer;
     font-size:16px;
-}
-
-button:disabled{
-    opacity:.5;
 }
 
 .status{
@@ -228,7 +223,7 @@ name="mode"
 value="basic"
 checked
 >
-Basic Styles (Recommended)
+Basic Styles
 </label>
 </div>
 
@@ -245,24 +240,16 @@ All Styles
 
 </div>
 
-</div>
-
 <div
+class="styleSelector"
 id="styleSelector"
-style="
-display:none;
-margin-top:20px;
-padding-top:20px;
-border-top:1px solid #ddd;
-"
+style="display:none;"
 >
 
 <b>Select Styles</b>
 
-<div
-id="styleList"
-style="margin-top:10px;"
->
+<div id="styleList"></div>
+
 </div>
 
 </div>
@@ -311,16 +298,18 @@ document.getElementById("infoBox");
 const fontInfo =
 document.getElementById("fontInfo");
 
+const styleSelector =
+document.getElementById("styleSelector");
+
+const styleList =
+document.getElementById("styleList");
+
 dropzone.addEventListener(
     "click",
     () => fileInput.click()
 );
 
 async function inspectSelectedFont(){
-
-    if(fileInput.files.length === 0){
-        return;
-    }
 
     const formData =
     new FormData();
@@ -344,11 +333,18 @@ async function inspectSelectedFont(){
 
     let html = "";
 
-    html += "<b>Font:</b> " + data.family_name + "<br><br>";
+    html +=
+    "<b>Font:</b> " +
+    data.family_name +
+    "<br><br>";
 
-    html += "<b>Instances:</b> " + data.instance_count + "<br><br>";
+    html +=
+    "<b>Instances:</b> " +
+    data.instance_count +
+    "<br><br>";
 
-    html += "<b>Axes:</b><br>";
+    html +=
+    "<b>Axes:</b><br>";
 
     data.axes.forEach(axis => {
 
@@ -363,30 +359,47 @@ async function inspectSelectedFont(){
 
     });
 
-    html += "<div class='styles'>";
-    html += "<b>Sample Styles</b><br>";
-
-    data.instances.slice(0,10).forEach(style => {
-
-        html +=
-        "<div class='styleItem'>" +
-        style +
-        "</div>";
-
-    });
-
-    if(data.instances.length > 10){
-
-        html +=
-        "<div class='styleItem'>...</div>";
-
-    }
-
-    html += "</div>";
-
     fontInfo.innerHTML = html;
 
-    infoBox.style.display = "block";
+    infoBox.style.display =
+    "block";
+
+    styleList.innerHTML = "";
+
+    data.common_styles.forEach(
+        style => {
+
+            const row =
+            document.createElement(
+                "div"
+            );
+
+            row.className =
+            "styleRow";
+
+            row.innerHTML =
+            `
+            <label>
+                <input
+                    type="checkbox"
+                    class="styleCheckbox"
+                    value="${style.name}"
+                    checked
+                >
+                ${style.name}
+            </label>
+            `;
+
+            styleList.appendChild(
+                row
+            );
+
+        }
+    );
+
+    styleSelector.style.display =
+    "block";
+
 }
 
 fileInput.addEventListener(
@@ -410,7 +423,10 @@ dropzone.addEventListener(
     e => {
 
         e.preventDefault();
-        dropzone.classList.add("dragover");
+
+        dropzone.classList.add(
+            "dragover"
+        );
 
     }
 );
@@ -419,7 +435,9 @@ dropzone.addEventListener(
     "dragleave",
     () => {
 
-        dropzone.classList.remove("dragover");
+        dropzone.classList.remove(
+            "dragover"
+        );
 
     }
 );
@@ -453,22 +471,25 @@ convertBtn.addEventListener(
     "click",
     async () => {
 
-        if(fileInput.files.length === 0){
+        const selectedStyles = [];
 
-            alert(
-                "Please select a font."
+        document
+        .querySelectorAll(
+            ".styleCheckbox:checked"
+        )
+        .forEach(box => {
+
+            selectedStyles.push(
+                box.value
             );
 
-            return;
-        }
+        });
 
         spinner.style.display =
         "block";
 
-        convertBtn.disabled = true;
-
-        statusText.textContent =
-        "Converting font...";
+        convertBtn.disabled =
+        true;
 
         const mode =
         document.querySelector(
@@ -488,56 +509,54 @@ convertBtn.addEventListener(
             mode
         );
 
-        try{
+        formData.append(
+            "selected_styles",
+            JSON.stringify(
+                selectedStyles
+            )
+        );
 
-            const response =
-            await fetch(
-                "http://127.0.0.1:8000/upload",
-                {
-                    method:"POST",
-                    body:formData
-                }
-            );
+        const response =
+        await fetch(
+            "http://127.0.0.1:8000/upload",
+            {
+                method:"POST",
+                body:formData
+            }
+        );
 
-            const blob =
-            await response.blob();
+        const blob =
+        await response.blob();
 
-            const url =
-            window.URL.createObjectURL(
-                blob
-            );
+        const url =
+        URL.createObjectURL(
+            blob
+        );
 
-            const a =
-            document.createElement("a");
+        const a =
+        document.createElement(
+            "a"
+        );
 
-            a.href = url;
-            a.download = "FreezeFont.zip";
+        a.href = url;
+        a.download = "FreezeFont.zip";
 
-            document.body.appendChild(a);
-            a.click();
-            a.remove();
+        document.body.appendChild(
+            a
+        );
 
-            spinner.style.display =
-            "none";
+        a.click();
 
-            statusText.textContent =
-            "✅ Conversion Complete";
+        a.remove();
 
-        }
-        catch(error){
-
-            spinner.style.display =
-            "none";
-
-            statusText.textContent =
-            "❌ Conversion Failed";
-
-            console.error(error);
-
-        }
+        spinner.style.display =
+        "none";
 
         convertBtn.disabled =
         false;
+
+        statusText.textContent =
+        "✅ Conversion Complete";
 
     }
 );
