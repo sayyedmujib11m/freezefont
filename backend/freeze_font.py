@@ -4,7 +4,15 @@ from pathlib import Path
 from zipfile import ZipFile
 
 
-def freeze_font(font_path, output_dir, mode="all"):
+def freeze_font(
+    font_path,
+    output_dir,
+    mode="all",
+    selected_styles=None
+):
+
+    if selected_styles is None:
+        selected_styles = []
 
     font = TTFont(font_path)
 
@@ -28,7 +36,37 @@ def freeze_font(font_path, output_dir, mode="all"):
 
     instances = font["fvar"].instances
 
-    if mode == "basic":
+    if len(selected_styles) > 0:
+
+        filtered_instances = []
+
+        for instance in instances:
+
+            instance_name = ""
+
+            try:
+
+                name_record = font["name"].getName(
+                    instance.subfamilyNameID,
+                    3,
+                    1,
+                    1033
+                )
+
+                if name_record:
+                    instance_name = str(name_record)
+
+            except:
+                pass
+
+            if instance_name in selected_styles:
+                filtered_instances.append(
+                    instance
+                )
+
+        instances = filtered_instances
+
+    elif mode == "basic":
 
         filtered_instances = []
 

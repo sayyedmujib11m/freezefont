@@ -8,6 +8,7 @@ from backend.inspect_font import inspect_font
 from pathlib import Path
 import shutil
 import os
+import json
 
 app = FastAPI()
 
@@ -50,7 +51,8 @@ async def inspect_uploaded_font(
 @app.post("/upload")
 async def upload_font(
     file: UploadFile = File(...),
-    mode: str = Form("all")
+    mode: str = Form("all"),
+    selected_styles: str = Form("[]")
 ):
 
     upload_path = Path(UPLOAD_FOLDER) / file.filename
@@ -58,10 +60,18 @@ async def upload_font(
     with open(upload_path, "wb") as buffer:
         shutil.copyfileobj(file.file, buffer)
 
+    try:
+        selected_styles_list = json.loads(
+            selected_styles
+        )
+    except:
+        selected_styles_list = []
+
     zip_path = freeze_font(
         str(upload_path),
         OUTPUT_FOLDER,
-        mode
+        mode,
+        selected_styles_list
     )
 
     return FileResponse(

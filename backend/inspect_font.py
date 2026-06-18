@@ -52,7 +52,9 @@ def inspect_font(font_path):
         except:
             pass
 
-        instances.append(instance_name)
+        instances.append({
+            "name": instance_name
+        })
 
     return {
         "is_variable": True,
