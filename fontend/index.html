@@ -2,566 +2,127 @@
 <html>
 
 <head>
-<title>FreezeFont</title>
 
-<style>
+    <title>FreezeFont</title>
 
-*{
-    box-sizing:border-box;
-}
+    <link
+        rel="stylesheet"
+        href="styles.css"
+    >
 
-body{
-    margin:0;
-    background:#f5f5f5;
-    font-family:Arial,sans-serif;
-    min-height:100vh;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    padding:20px;
-}
-
-.card{
-    width:100%;
-    max-width:700px;
-    background:white;
-    padding:40px;
-    border-radius:24px;
-    box-shadow:0 10px 40px rgba(0,0,0,.08);
-    text-align:center;
-}
-
-h1{
-    margin:0;
-    font-size:52px;
-}
-
-.tagline{
-    margin-top:10px;
-    font-size:18px;
-    font-weight:bold;
-}
-
-.subtitle{
-    color:#666;
-    margin-top:15px;
-    line-height:1.6;
-}
-
-.dropzone{
-    margin-top:30px;
-    border:3px dashed #ddd;
-    border-radius:20px;
-    padding:50px 20px;
-    cursor:pointer;
-}
-
-.dropzone.dragover{
-    border-color:black;
-    background:#fafafa;
-}
-
-.icon{
-    font-size:48px;
-}
-
-.filename{
-    margin-top:15px;
-    font-weight:bold;
-}
-
-.formats{
-    margin-top:15px;
-    color:#888;
-    font-size:14px;
-}
-
-.infoBox{
-    margin-top:25px;
-    padding:20px;
-    border-radius:12px;
-    background:#fafafa;
-    text-align:left;
-    display:none;
-}
-
-.infoTitle{
-    font-weight:bold;
-    margin-bottom:10px;
-}
-
-.axis{
-    margin-top:5px;
-}
-
-.modeBox{
-    margin-top:20px;
-    padding-top:20px;
-    border-top:1px solid #ddd;
-}
-
-.modeItem{
-    margin-top:10px;
-}
-
-.styleSelector{
-    margin-top:20px;
-    padding-top:20px;
-    border-top:1px solid #ddd;
-}
-
-.styleRow{
-    margin-top:8px;
-}
-
-button{
-    margin-top:25px;
-    border:none;
-    background:black;
-    color:white;
-    padding:15px 30px;
-    border-radius:12px;
-    cursor:pointer;
-    font-size:16px;
-}
-
-.status{
-    margin-top:20px;
-    font-weight:bold;
-}
-
-.spinner{
-    display:none;
-    width:30px;
-    height:30px;
-    border:4px solid #ddd;
-    border-top:4px solid black;
-    border-radius:50%;
-    animation:spin 1s linear infinite;
-    margin:20px auto 0;
-}
-
-@keyframes spin{
-    100%{
-        transform:rotate(360deg);
-    }
-}
-
-</style>
 </head>
 
 <body>
 
 <div class="card">
 
-<h1>FreezeFont</h1>
+    <h1>FreezeFont</h1>
 
-<div class="tagline">
-Variable Font → Static TTF
-</div>
+    <div class="tagline">
+        Variable Font → Static TTF
+    </div>
 
-<div class="subtitle">
-Upload a variable font and inspect it before conversion.
-</div>
+    <div class="subtitle">
+        Upload a variable font and inspect it before conversion.
+    </div>
 
-<input
-type="file"
-id="fontFile"
-hidden
->
+    <input
+        type="file"
+        id="fontFile"
+        hidden
+    >
 
-<div
-class="dropzone"
-id="dropzone"
->
+    <div
+        class="dropzone"
+        id="dropzone"
+    >
 
-<div class="icon">
-Aa
-</div>
+        <div class="icon">
+            Aa
+        </div>
 
-<h3>
-Drop Font Here
-</h3>
+        <h3>
+            Drop Font Here
+        </h3>
 
-<div>
-or click to browse
-</div>
+        <div>
+            or click to browse
+        </div>
 
-<div
-class="filename"
-id="fileName"
->
-No file selected
-</div>
+        <div
+            class="filename"
+            id="fileName"
+        >
+            No file selected
+        </div>
 
-<div class="formats">
-Supported: TTF • OTF • WOFF2 Variable Fonts
-</div>
+        <div class="formats">
+            Supported: TTF • OTF • WOFF2 Variable Fonts
+        </div>
 
-</div>
+    </div>
 
-<div
-class="infoBox"
-id="infoBox"
->
+    <div
+        class="infoBox"
+        id="infoBox"
+    >
 
-<div class="infoTitle">
-Font Information
-</div>
+        <div class="infoTitle">
+            Font Information
+        </div>
 
-<div id="fontInfo"></div>
+        <div id="fontInfo"></div>
 
-<div class="modeBox">
+        <div class="modeBox">
 
-<b>Conversion Mode</b>
+            <b>Conversion Mode</b>
 
-<div class="modeItem">
-<label>
-<input
-type="radio"
-name="mode"
-value="basic"
-checked
->
-Basic Styles
-</label>
-</div>
+            <div class="modeItem">
+                <label>
+                    <input
+                        type="radio"
+                        name="mode"
+                        value="basic"
+                        checked
+                    >
+                    Basic Styles (Recommended)
+                </label>
+            </div>
 
-<div class="modeItem">
-<label>
-<input
-type="radio"
-name="mode"
-value="all"
->
-All Styles
-</label>
-</div>
+            <div class="modeItem">
+                <label>
+                    <input
+                        type="radio"
+                        name="mode"
+                        value="all"
+                    >
+                    All Styles
+                </label>
+            </div>
 
-</div>
+        </div>
 
-<div
-class="styleSelector"
-id="styleSelector"
-style="display:none;"
->
+    </div>
 
-<b>Select Styles</b>
+    <button
+        id="convertBtn"
+    >
+        Convert & Download
+    </button>
 
-<div id="styleList"></div>
+    <div
+        class="spinner"
+        id="spinner"
+    ></div>
 
-</div>
-
-</div>
-
-<button
-id="convertBtn"
->
-Convert & Download
-</button>
-
-<div
-class="spinner"
-id="spinner"
-></div>
-
-<div
-class="status"
-id="status"
-></div>
+    <div
+        class="status"
+        id="status"
+    ></div>
 
 </div>
 
-<script>
-
-const dropzone =
-document.getElementById("dropzone");
-
-const fileInput =
-document.getElementById("fontFile");
-
-const fileName =
-document.getElementById("fileName");
-
-const convertBtn =
-document.getElementById("convertBtn");
-
-const statusText =
-document.getElementById("status");
-
-const spinner =
-document.getElementById("spinner");
-
-const infoBox =
-document.getElementById("infoBox");
-
-const fontInfo =
-document.getElementById("fontInfo");
-
-const styleSelector =
-document.getElementById("styleSelector");
-
-const styleList =
-document.getElementById("styleList");
-
-dropzone.addEventListener(
-    "click",
-    () => fileInput.click()
-);
-
-async function inspectSelectedFont(){
-
-    const formData =
-    new FormData();
-
-    formData.append(
-        "file",
-        fileInput.files[0]
-    );
-
-    const response =
-    await fetch(
-        "http://127.0.0.1:8000/inspect",
-        {
-            method:"POST",
-            body:formData
-        }
-    );
-
-    const data =
-    await response.json();
-
-    let html = "";
-
-    html +=
-    "<b>Font:</b> " +
-    data.family_name +
-    "<br><br>";
-
-    html +=
-    "<b>Instances:</b> " +
-    data.instance_count +
-    "<br><br>";
-
-    html +=
-    "<b>Axes:</b><br>";
-
-    data.axes.forEach(axis => {
-
-        html +=
-        "<div class='axis'>" +
-        axis.tag +
-        " : " +
-        axis.min +
-        " → " +
-        axis.max +
-        "</div>";
-
-    });
-
-    fontInfo.innerHTML = html;
-
-    infoBox.style.display =
-    "block";
-
-    styleList.innerHTML = "";
-
-    data.common_styles.forEach(
-        style => {
-
-            const row =
-            document.createElement(
-                "div"
-            );
-
-            row.className =
-            "styleRow";
-
-            row.innerHTML =
-            `
-            <label>
-                <input
-                    type="checkbox"
-                    class="styleCheckbox"
-                    value="${style.name}"
-                    checked
-                >
-                ${style.name}
-            </label>
-            `;
-
-            styleList.appendChild(
-                row
-            );
-
-        }
-    );
-
-    styleSelector.style.display =
-    "block";
-
-}
-
-fileInput.addEventListener(
-    "change",
-    () => {
-
-        if(fileInput.files.length){
-
-            fileName.textContent =
-            fileInput.files[0].name;
-
-            inspectSelectedFont();
-
-        }
-
-    }
-);
-
-dropzone.addEventListener(
-    "dragover",
-    e => {
-
-        e.preventDefault();
-
-        dropzone.classList.add(
-            "dragover"
-        );
-
-    }
-);
-
-dropzone.addEventListener(
-    "dragleave",
-    () => {
-
-        dropzone.classList.remove(
-            "dragover"
-        );
-
-    }
-);
-
-dropzone.addEventListener(
-    "drop",
-    e => {
-
-        e.preventDefault();
-
-        dropzone.classList.remove(
-            "dragover"
-        );
-
-        fileInput.files =
-        e.dataTransfer.files;
-
-        if(fileInput.files.length){
-
-            fileName.textContent =
-            fileInput.files[0].name;
-
-            inspectSelectedFont();
-
-        }
-
-    }
-);
-
-convertBtn.addEventListener(
-    "click",
-    async () => {
-
-        const selectedStyles = [];
-
-        document
-        .querySelectorAll(
-            ".styleCheckbox:checked"
-        )
-        .forEach(box => {
-
-            selectedStyles.push(
-                box.value
-            );
-
-        });
-
-        spinner.style.display =
-        "block";
-
-        convertBtn.disabled =
-        true;
-
-        const mode =
-        document.querySelector(
-            'input[name="mode"]:checked'
-        ).value;
-
-        const formData =
-        new FormData();
-
-        formData.append(
-            "file",
-            fileInput.files[0]
-        );
-
-        formData.append(
-            "mode",
-            mode
-        );
-
-        formData.append(
-            "selected_styles",
-            JSON.stringify(
-                selectedStyles
-            )
-        );
-
-        const response =
-        await fetch(
-            "http://127.0.0.1:8000/upload",
-            {
-                method:"POST",
-                body:formData
-            }
-        );
-
-        const blob =
-        await response.blob();
-
-        const url =
-        URL.createObjectURL(
-            blob
-        );
-
-        const a =
-        document.createElement(
-            "a"
-        );
-
-        a.href = url;
-        a.download = "FreezeFont.zip";
-
-        document.body.appendChild(
-            a
-        );
-
-        a.click();
-
-        a.remove();
-
-        spinner.style.display =
-        "none";
-
-        convertBtn.disabled =
-        false;
-
-        statusText.textContent =
-        "✅ Conversion Complete";
-
-    }
-);
-
-</script>
+<script src="app.js"></script>
 
 </body>
 </html>
