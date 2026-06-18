@@ -2,8 +2,8 @@ from fastapi import FastAPI, UploadFile, File, Form
 from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 
-from backend.freeze_font import freeze_font
-from backend.inspect_font import inspect_font
+from backend.services.freeze_font import freeze_font
+from backend.services.inspect_font import inspect_font
 
 from pathlib import Path
 import shutil
