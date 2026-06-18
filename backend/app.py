@@ -1,4 +1,4 @@
-from fastapi import FastAPI, UploadFile, File
+from fastapi import FastAPI, UploadFile, File, Form
 from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -35,7 +35,9 @@ def home():
 
 
 @app.post("/inspect")
-async def inspect_uploaded_font(file: UploadFile = File(...)):
+async def inspect_uploaded_font(
+    file: UploadFile = File(...)
+):
 
     upload_path = Path(UPLOAD_FOLDER) / file.filename
 
@@ -46,7 +48,10 @@ async def inspect_uploaded_font(file: UploadFile = File(...)):
 
 
 @app.post("/upload")
-async def upload_font(file: UploadFile = File(...)):
+async def upload_font(
+    file: UploadFile = File(...),
+    mode: str = Form("all")
+):
 
     upload_path = Path(UPLOAD_FOLDER) / file.filename
 
@@ -55,7 +60,8 @@ async def upload_font(file: UploadFile = File(...)):
 
     zip_path = freeze_font(
         str(upload_path),
-        OUTPUT_FOLDER
+        OUTPUT_FOLDER,
+        mode
     )
 
     return FileResponse(

@@ -105,6 +105,16 @@ h1{
     color:#444;
 }
 
+.modeBox{
+    margin-top:20px;
+    padding-top:20px;
+    border-top:1px solid #ddd;
+}
+
+.modeItem{
+    margin-top:10px;
+}
+
 button{
     margin-top:25px;
     border:none;
@@ -206,6 +216,35 @@ Font Information
 
 <div id="fontInfo"></div>
 
+<div class="modeBox">
+
+<b>Conversion Mode</b>
+
+<div class="modeItem">
+<label>
+<input
+type="radio"
+name="mode"
+value="basic"
+checked
+>
+Basic Styles (Recommended)
+</label>
+</div>
+
+<div class="modeItem">
+<label>
+<input
+type="radio"
+name="mode"
+value="all"
+>
+All Styles
+</label>
+</div>
+
+</div>
+
 </div>
 
 <button
@@ -283,31 +322,13 @@ async function inspectSelectedFont(){
     const data =
     await response.json();
 
-    if(!data.is_variable){
-
-        fontInfo.innerHTML =
-        "Not a variable font.";
-
-        infoBox.style.display =
-        "block";
-
-        return;
-    }
-
     let html = "";
 
-    html +=
-    "<b>Font:</b> " +
-    data.family_name +
-    "<br><br>";
+    html += "<b>Font:</b> " + data.family_name + "<br><br>";
 
-    html +=
-    "<b>Instances:</b> " +
-    data.instance_count +
-    "<br><br>";
+    html += "<b>Instances:</b> " + data.instance_count + "<br><br>";
 
-    html +=
-    "<b>Axes:</b><br>";
+    html += "<b>Axes:</b><br>";
 
     data.axes.forEach(axis => {
 
@@ -322,16 +343,10 @@ async function inspectSelectedFont(){
 
     });
 
-    html +=
-    "<div class='styles'>";
+    html += "<div class='styles'>";
+    html += "<b>Sample Styles</b><br>";
 
-    html +=
-    "<b>Sample Styles</b><br>";
-
-    const preview =
-    data.instances.slice(0,10);
-
-    preview.forEach(style => {
+    data.instances.slice(0,10).forEach(style => {
 
         html +=
         "<div class='styleItem'>" +
@@ -347,15 +362,11 @@ async function inspectSelectedFont(){
 
     }
 
-    html +=
-    "</div>";
+    html += "</div>";
 
-    fontInfo.innerHTML =
-    html;
+    fontInfo.innerHTML = html;
 
-    infoBox.style.display =
-    "block";
-
+    infoBox.style.display = "block";
 }
 
 fileInput.addEventListener(
@@ -379,10 +390,7 @@ dropzone.addEventListener(
     e => {
 
         e.preventDefault();
-
-        dropzone.classList.add(
-            "dragover"
-        );
+        dropzone.classList.add("dragover");
 
     }
 );
@@ -391,9 +399,7 @@ dropzone.addEventListener(
     "dragleave",
     () => {
 
-        dropzone.classList.remove(
-            "dragover"
-        );
+        dropzone.classList.remove("dragover");
 
     }
 );
@@ -439,11 +445,15 @@ convertBtn.addEventListener(
         spinner.style.display =
         "block";
 
+        convertBtn.disabled = true;
+
         statusText.textContent =
         "Converting font...";
 
-        convertBtn.disabled =
-        true;
+        const mode =
+        document.querySelector(
+            'input[name="mode"]:checked'
+        ).value;
 
         const formData =
         new FormData();
@@ -451,6 +461,11 @@ convertBtn.addEventListener(
         formData.append(
             "file",
             fileInput.files[0]
+        );
+
+        formData.append(
+            "mode",
+            mode
         );
 
         try{
@@ -468,7 +483,9 @@ convertBtn.addEventListener(
             await response.blob();
 
             const url =
-            window.URL.createObjectURL(blob);
+            window.URL.createObjectURL(
+                blob
+            );
 
             const a =
             document.createElement("a");
@@ -494,6 +511,8 @@ convertBtn.addEventListener(
 
             statusText.textContent =
             "❌ Conversion Failed";
+
+            console.error(error);
 
         }
 

@@ -3,7 +3,8 @@ from fontTools.varLib.instancer import instantiateVariableFont
 from pathlib import Path
 from zipfile import ZipFile
 
-def freeze_font(font_path, output_dir):
+
+def freeze_font(font_path, output_dir, mode="all"):
 
     font = TTFont(font_path)
 
@@ -23,9 +24,66 @@ def freeze_font(font_path, output_dir):
     except:
         pass
 
+    generated_files = []
+
     instances = font["fvar"].instances
 
-    generated_files = []
+    if mode == "basic":
+
+        filtered_instances = []
+
+        allowed_keywords = [
+            "Thin",
+            "Light",
+            "Regular",
+            "SemiBold",
+            "Bold",
+            "Black",
+            "Oblique"
+        ]
+
+        for instance in instances:
+
+            instance_name = ""
+
+            try:
+
+                name_record = font["name"].getName(
+                    instance.subfamilyNameID,
+                    3,
+                    1,
+                    1033
+                )
+
+                if name_record:
+                    instance_name = str(name_record)
+
+            except:
+                pass
+
+            blocked_words = [
+                "Condensed",
+                "Expanded",
+                "Contrast"
+            ]
+
+            blocked = False
+
+            for word in blocked_words:
+                if word in instance_name:
+                    blocked = True
+
+            if blocked:
+                continue
+
+            for keyword in allowed_keywords:
+                if keyword in instance_name:
+                    filtered_instances.append(
+                        instance
+                    )
+                    break
+
+        instances = filtered_instances
 
     for instance in instances:
 
@@ -39,10 +97,8 @@ def freeze_font(font_path, output_dir):
             inplace=False
         )
 
-        # Convert WOFF2 → TTF
         static_font.flavor = None
 
-        # Remove variable font tables
         for table in [
             "fvar",
             "gvar",
@@ -56,20 +112,58 @@ def freeze_font(font_path, output_dir):
             if table in static_font:
                 del static_font[table]
 
-        weight = list(coords.values())[0]
+        instance_name = "Font"
 
-        filename = f"{family_name}-{weight}.ttf"
+        try:
 
-        output_file = output_dir / filename
+            name_record = font["name"].getName(
+                instance.subfamilyNameID,
+                3,
+                1,
+                1033
+            )
 
-        static_font.save(str(output_file))
+            if name_record:
+                instance_name = str(name_record)
 
-        generated_files.append(output_file)
+        except:
+            pass
 
-    zip_path = output_dir / f"{family_name}.zip"
+        safe_name = (
+            instance_name
+            .replace(" ", "-")
+            .replace("/", "-")
+        )
 
-    with ZipFile(zip_path, "w") as zip_file:
+        filename = (
+            f"{family_name}-{safe_name}.ttf"
+        )
+
+        output_file = (
+            output_dir / filename
+        )
+
+        static_font.save(
+            str(output_file)
+        )
+
+        generated_files.append(
+            output_file
+        )
+
+    zip_name = (
+        f"{family_name}-{mode}.zip"
+    )
+
+    zip_path = output_dir / zip_name
+
+    with ZipFile(
+        zip_path,
+        "w"
+    ) as zip_file:
+
         for file in generated_files:
+
             zip_file.write(
                 file,
                 arcname=file.name
