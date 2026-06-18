@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html>
 
 <head>
@@ -95,6 +94,17 @@ h1{
     margin-top:5px;
 }
 
+.styles{
+    margin-top:15px;
+    padding-top:15px;
+    border-top:1px solid #ddd;
+}
+
+.styleItem{
+    margin-top:4px;
+    color:#444;
+}
+
 button{
     margin-top:25px;
     border:none;
@@ -133,7 +143,6 @@ button:disabled{
 }
 
 </style>
-
 </head>
 
 <body>
@@ -154,7 +163,6 @@ Upload a variable font and inspect it before conversion.
 type="file"
 id="fontFile"
 hidden
-
 >
 
 <div
@@ -191,6 +199,7 @@ Supported: TTF • OTF • WOFF2 Variable Fonts
 class="infoBox"
 id="infoBox"
 >
+
 <div class="infoTitle">
 Font Information
 </div>
@@ -201,10 +210,9 @@ Font Information
 
 <button
 id="convertBtn"
-
 >
-
-Convert & Download </button>
+Convert & Download
+</button>
 
 <div
 class="spinner"
@@ -263,71 +271,90 @@ async function inspectSelectedFont(){
         fileInput.files[0]
     );
 
-    try{
-
-        const response =
-        await fetch(
-            "http://127.0.0.1:8000/inspect",
-            {
-                method:"POST",
-                body:formData
-            }
-        );
-
-        const data =
-        await response.json();
-
-        if(!data.is_variable){
-
-            fontInfo.innerHTML =
-            "Not a variable font.";
-
-            infoBox.style.display =
-            "block";
-
-            return;
+    const response =
+    await fetch(
+        "http://127.0.0.1:8000/inspect",
+        {
+            method:"POST",
+            body:formData
         }
+    );
 
-        let html = "";
+    const data =
+    await response.json();
 
-        html +=
-        "<b>Font:</b> " +
-        data.family_name +
-        "<br><br>";
-
-        html +=
-        "<b>Instances:</b> " +
-        data.instance_count +
-        "<br><br>";
-
-        html +=
-        "<b>Axes:</b><br>";
-
-        data.axes.forEach(axis => {
-
-            html +=
-            "<div class='axis'>" +
-            axis.tag +
-            " : " +
-            axis.min +
-            " → " +
-            axis.max +
-            "</div>";
-
-        });
+    if(!data.is_variable){
 
         fontInfo.innerHTML =
-        html;
+        "Not a variable font.";
 
         infoBox.style.display =
         "block";
 
+        return;
     }
-    catch(error){
 
-        console.error(error);
+    let html = "";
+
+    html +=
+    "<b>Font:</b> " +
+    data.family_name +
+    "<br><br>";
+
+    html +=
+    "<b>Instances:</b> " +
+    data.instance_count +
+    "<br><br>";
+
+    html +=
+    "<b>Axes:</b><br>";
+
+    data.axes.forEach(axis => {
+
+        html +=
+        "<div class='axis'>" +
+        axis.tag +
+        " : " +
+        axis.min +
+        " → " +
+        axis.max +
+        "</div>";
+
+    });
+
+    html +=
+    "<div class='styles'>";
+
+    html +=
+    "<b>Sample Styles</b><br>";
+
+    const preview =
+    data.instances.slice(0,10);
+
+    preview.forEach(style => {
+
+        html +=
+        "<div class='styleItem'>" +
+        style +
+        "</div>";
+
+    });
+
+    if(data.instances.length > 10){
+
+        html +=
+        "<div class='styleItem'>...</div>";
 
     }
+
+    html +=
+    "</div>";
+
+    fontInfo.innerHTML =
+    html;
+
+    infoBox.style.display =
+    "block";
 
 }
 
@@ -441,22 +468,16 @@ convertBtn.addEventListener(
             await response.blob();
 
             const url =
-            window.URL.createObjectURL(
-                blob
-            );
+            window.URL.createObjectURL(blob);
 
             const a =
             document.createElement("a");
 
             a.href = url;
-
-            a.download =
-            "FreezeFont.zip";
+            a.download = "FreezeFont.zip";
 
             document.body.appendChild(a);
-
             a.click();
-
             a.remove();
 
             spinner.style.display =

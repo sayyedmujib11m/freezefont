@@ -31,13 +31,33 @@ def inspect_font(font_path):
             "default": axis.defaultValue
         })
 
-    instance_count = len(
-        font["fvar"].instances
-    )
+    instances = []
+
+    for instance in font["fvar"].instances:
+
+        instance_name = "Unknown"
+
+        try:
+
+            name_record = font["name"].getName(
+                instance.subfamilyNameID,
+                3,
+                1,
+                1033
+            )
+
+            if name_record:
+                instance_name = str(name_record)
+
+        except:
+            pass
+
+        instances.append(instance_name)
 
     return {
         "is_variable": True,
         "family_name": family_name,
-        "instance_count": instance_count,
-        "axes": axes
+        "instance_count": len(instances),
+        "axes": axes,
+        "instances": instances
     }
