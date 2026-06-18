@@ -1,4 +1,5 @@
 from fastapi import FastAPI, UploadFile, File
+from fastapi.responses import FileResponse
 from backend.freeze_font import freeze_font
 from pathlib import Path
 import shutil
@@ -21,6 +22,7 @@ def home():
 
 @app.post("/upload")
 async def upload_font(file: UploadFile = File(...)):
+
     upload_path = Path(UPLOAD_FOLDER) / file.filename
 
     with open(upload_path, "wb") as buffer:
@@ -31,8 +33,8 @@ async def upload_font(file: UploadFile = File(...)):
         OUTPUT_FOLDER
     )
 
-    return {
-        "success": True,
-        "filename": file.filename,
-        "zip_file": zip_path
-    }
+    return FileResponse(
+        path=zip_path,
+        filename=Path(zip_path).name,
+        media_type="application/zip"
+    )
