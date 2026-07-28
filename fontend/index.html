@@ -1,129 +1,85 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
-
-    <title>FreezeFont</title>
-
-    <link
-        rel="stylesheet"
-        href="styles.css"
-    >
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FreezeFont — Variable Font Converter</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
-
 <body>
+    <main class="shell">
+        <section class="hero card">
+            <div class="badge">FastAPI + FontTools</div>
+            <h1>FreezeFont</h1>
+            <p class="tagline">Turn variable fonts into production-ready static TTF files.</p>
+            <p class="subtitle">
+                Drop a variable TTF, OTF, or WOFF2 file, inspect its axes and named instances,
+                choose the styles you want, then download a ZIP of generated static fonts.
+            </p>
 
-<div class="card">
+            <input type="file" id="fontFile" accept=".ttf,.otf,.woff,.woff2,font/*" hidden>
 
-    <h1>FreezeFont</h1>
+            <button class="dropzone" id="dropzone" type="button" aria-label="Choose or drop a font file">
+                <span class="icon">Aa</span>
+                <span class="dropTitle">Drop font here</span>
+                <span class="dropHint">or click to browse</span>
+                <span class="filename" id="fileName">No file selected</span>
+                <span class="formats">Supported: TTF • OTF • WOFF2 variable fonts</span>
+            </button>
+        </section>
 
-    <div class="tagline">
-        Variable Font → Static TTF
-    </div>
+        <section class="card infoBox" id="infoBox" aria-live="polite">
+            <div class="sectionHeader">
+                <div>
+                    <p class="eyebrow">Inspection</p>
+                    <h2>Font information</h2>
+                </div>
+                <span class="pill" id="instancePill">0 styles</span>
+            </div>
 
-    <div class="subtitle">
-        Upload a variable font and inspect it before conversion.
-    </div>
+            <div id="fontInfo"></div>
 
-    <input
-        type="file"
-        id="fontFile"
-        hidden
-    >
+            <div class="modeBox">
+                <p class="modeTitle">Conversion mode</p>
 
-    <div
-        class="dropzone"
-        id="dropzone"
-    >
+                <label class="modeItem">
+                    <input type="radio" name="mode" value="basic" checked>
+                    <span>
+                        <strong>Basic styles</strong>
+                        <small>Recommended weights such as Regular, SemiBold, Bold, and Black.</small>
+                    </span>
+                </label>
 
-        <div class="icon">
-            Aa
-        </div>
+                <label class="modeItem">
+                    <input type="radio" name="mode" value="all">
+                    <span>
+                        <strong>All named styles</strong>
+                        <small>Generate every named instance available in the font.</small>
+                    </span>
+                </label>
 
-        <h3>
-            Drop Font Here
-        </h3>
-
-        <div>
-            or click to browse
-        </div>
-
-        <div
-            class="filename"
-            id="fileName"
-        >
-            No file selected
-        </div>
-
-        <div class="formats">
-            Supported: TTF • OTF • WOFF2 Variable Fonts
-        </div>
-
-    </div>
-
-    <div
-        class="infoBox"
-        id="infoBox"
-    >
-
-        <div class="infoTitle">
-            Font Information
-        </div>
-
-        <div id="fontInfo"></div>
-
-        <div class="modeBox">
-
-            <b>Conversion Mode</b>
-
-            <div class="modeItem">
-                <label>
-                    <input
-                        type="radio"
-                        name="mode"
-                        value="basic"
-                        checked
-                    >
-                    Basic Styles (Recommended)
+                <label class="modeItem">
+                    <input type="radio" name="mode" value="custom">
+                    <span>
+                        <strong>Choose styles</strong>
+                        <small>Select exact named instances below.</small>
+                    </span>
                 </label>
             </div>
 
-            <div class="modeItem">
-                <label>
-                    <input
-                        type="radio"
-                        name="mode"
-                        value="all"
-                    >
-                    All Styles
-                </label>
-            </div>
+            <div class="stylePicker" id="stylePicker"></div>
+        </section>
 
-        </div>
+        <section class="actions card">
+            <button id="convertBtn" class="primaryBtn" type="button" disabled>
+                Convert & Download ZIP
+            </button>
+            <div class="spinner" id="spinner"></div>
+            <div class="status" id="status">Upload a font to begin.</div>
+        </section>
+    </main>
 
-    </div>
-
-    <button
-        id="convertBtn"
-    >
-        Convert & Download
-    </button>
-
-    <div
-        class="spinner"
-        id="spinner"
-    ></div>
-
-    <div
-        class="status"
-        id="status"
-    ></div>
-
-</div>
-
-<script src="config.js"></script>
-<script src="app.js"></script>
-
+    <script src="config.js"></script>
+    <script src="app.js"></script>
 </body>
 </html>
